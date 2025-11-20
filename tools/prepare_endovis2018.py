@@ -165,6 +165,9 @@ def get_one_sample(root_dir, image_file, image_path, save_dir, mask,
         suffix = '.jpg'
     elif '.png' in image_file:
         suffix = '.png'
+    elif '.bmp' in image_file:   # <--- 新增
+        suffix = '.bmp'
+
     mask_path = os.path.join(
         save_dir,
         image_file.replace(suffix, '') + '_{}.png'.format(class_name))
@@ -208,25 +211,25 @@ def process(root_dir, cris_data_file):
                     get_one_sample(root_dir, image_file, image_path,
                                    cris_masks_dir, target_mask, class_name))
         # parts
-        _, seq_id, image_name = image_file.split('_')
-        parts_mask_path = os.path.join(root_dir, seq2path[seq_id], image_name)
-        parts_mask = cv2.imread(parts_mask_path)
-        parts_mask = cv2.cvtColor(parts_mask, cv2.COLOR_BGR2RGB)
-        parts_mask = rgb2id(parts_mask)
-        for class_name in ['shaft', 'wrist', 'claspers']:
-            if class_name == 'shaft':
-                target_mask = (parts_mask
-                               == (0 + 255 * 256 + 0 * 256 * 256)) * 255
-            elif class_name == 'wrist':
-                target_mask = (parts_mask
-                               == (125 + 255 * 256 + 12 * 256 * 256)) * 255
-            elif class_name == 'claspers':
-                target_mask = (parts_mask
-                               == (0 + 255 * 256 + 255 * 256 * 256)) * 255
-            if target_mask.sum() != 0:
-                cris_data_list.append(
-                    get_one_sample(root_dir, image_file, image_path,
-                                   cris_masks_dir, target_mask, class_name))
+        # _, seq_id, image_name = image_file.split('_')
+        # parts_mask_path = os.path.join(root_dir, seq2path[seq_id], image_name)
+        # parts_mask = cv2.imread(parts_mask_path)
+        # parts_mask = cv2.cvtColor(parts_mask, cv2.COLOR_BGR2RGB)
+        # parts_mask = rgb2id(parts_mask)
+        # for class_name in ['shaft', 'wrist', 'claspers']:
+        #     if class_name == 'shaft':
+        #         target_mask = (parts_mask
+        #                        == (0 + 255 * 256 + 0 * 256 * 256)) * 255
+        #     elif class_name == 'wrist':
+        #         target_mask = (parts_mask
+        #                        == (125 + 255 * 256 + 12 * 256 * 256)) * 255
+        #     elif class_name == 'claspers':
+        #         target_mask = (parts_mask
+        #                        == (0 + 255 * 256 + 255 * 256 * 256)) * 255
+        #     if target_mask.sum() != 0:
+        #         cris_data_list.append(
+        #             get_one_sample(root_dir, image_file, image_path,
+        #                            cris_masks_dir, target_mask, class_name))
         # instruments
         for class_id, class_name in label_id2name.items():
             target_mask = (mask == class_id) * 255
