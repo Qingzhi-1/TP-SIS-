@@ -1,15 +1,21 @@
 DATA:
   dataset: endovis2018
-  train_data_file: cris_train.json
-  train_data_root: ./EndoVis2018/train/
-  val_data_file: cris_val.json
-  val_data_root: ./EndoVis2018/val/
+  # ⚠️ 修改点 1: 你的训练集 JSON 文件名
+  train_data_file: endovis2018_train.json
+  # ⚠️ 修改点 2: 你的训练集绝对路径
+  train_data_root: /root/datasets/endovis2018/train/
+  # ⚠️ 修改点 3: 你的验证集 JSON 文件名
+  val_data_file: endovis2018_val.json
+  # ⚠️ 修改点 4: 你的验证集绝对路径
+  val_data_root: /root/datasets/endovis2018/val/
   sents_select_type: "random"
   use_vis_aug: True
   use_vis_aug_non_rigid: False
+
 TRAIN:
   freeze_modules: ['backbone.token_embedding', 'backbone.transformer']
   # Base Arch
+  # ⚠️ 注意: 这里指向了本地权重的路径，下一步我们需要去下载它
   clip_pretrain: pretrain/CLIP-ViT-B-16-laion2B-s34B-b88K/open_clip_pytorch_model.bin
   input_size: 448
   word_len: 77
@@ -36,6 +42,7 @@ TRAIN:
   moe_consistency_loss_weight: 1.0
   # MAE
   use_mae_gen_target_area: False
+  # ⚠️ 注意: MAE 权重路径，也需要下载
   mae_pretrain: 'pretrain/mae_pretrain_vit_base.pth'
   mae_input_shape: [224, 224]
   mae_mask_ratio: 0.25
@@ -43,13 +50,13 @@ TRAIN:
   mae_hard_example_mining_type: 'v1'
   mae_shared_encoder: True
   # Training Setting
-  workers: 8  # data loader workers
+  workers: 8
   workers_val: 4
   epochs: 50
   milestones: [35]
   start_epoch: 0
-  batch_size: 16  # batch size for training
-  batch_size_val: 16  # batch size for validation during training, memory and speed tradeoff
+  batch_size: 16  # 如果报错 "CUDA out of memory"，把这里改成 8 或 4
+  batch_size_val: 16
   optimizer: adam
   base_lr: 0.0001
   lr_decay: 0.1
@@ -63,16 +70,19 @@ TRAIN:
   exp_name: CRIS
   output_folder: exp/endovis2018
   save_freq: 1
-  weight:  # path to initial weight (default: none)
-  resume:  # path to latest checkpoint (default: none)
-  evaluate: True  # evaluate on validation set, extra gpu memory needed and small batch_size_val is recommend
+  weight:
+  resume:
+  evaluate: True
+
 Distributed:
   dist_url: tcp://localhost:3681
   dist_backend: 'nccl'
   multiprocessing_distributed: True
   world_size: 1
   rank: 0
+
 TEST:
-  test_data_file: cris_val.json
-  test_data_root: ./EndoVis2018/val/
+  # ⚠️ 修改点 5: 测试集路径同步修改
+  test_data_file: endovis2018_val.json
+  test_data_root: /root/datasets/endovis2018/val/
   visualize: False

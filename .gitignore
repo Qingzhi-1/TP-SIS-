@@ -1,0 +1,20 @@
+# 写入忽略规则 (覆盖写入)
+cat > .gitignore <<EOF
+# 忽略权重文件
+pretrain/
+*.pth
+*.bin
+
+# 忽略数据集 (如果有的话)
+datasets/
+
+# 忽略训练输出的日志和模型
+exp/
+
+# 忽略 Python 缓存
+__pycache__/
+*.pyc
+
+# 忽略 VSC 配置
+.vscode/
+EOF
