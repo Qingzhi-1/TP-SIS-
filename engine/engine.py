@@ -229,15 +229,18 @@ def inference(test_loader, model, cfgs):
             iou_list.append(iou)
             # dump prediction
             if cfgs.visualize:
-                if 'EndoVis2017' in param['mask_path'][0]:
+                # 修改点 1: 兼容小写 endovis2017
+                if 'EndoVis2017' in param['mask_path'][0] or 'endovis2017' in param['mask_path'][0]:
                     image_split = param['mask_path'][0].split('/')[-3]
                     image_id = param['mask_path'][0].split('/')[-1].split(
                         '_')[0]
-                elif 'EndoVis2018' in param['mask_path'][0]:
+                # 修改点 2: 兼容小写 endovis2018
+                elif 'EndoVis2018' in param['mask_path'][0] or 'endovis2018' in param['mask_path'][0]:
                     image_split = '_'.join(
                         param['mask_path'][0].split('/')[-1].split('_')[:2])
                     image_id = param['mask_path'][0].split('/')[-1].split(
                         '_')[2]
+                    
                 elif 'EndoVis2019' in param['mask_path'][0]:
                     image_split = param['mask_path'][0].split('/')[-2]
                     image_id = '_'.join(
@@ -269,23 +272,26 @@ def inference(test_loader, model, cfgs):
                 # save results for vis
                 pred_name = 'pred-{}-{}-{}-iou={:.2f}-{}.jpg'.format(
                     image_split, image_id, seg_type, iou * 100, sent)
-                if 'EndoVis2017' in cfgs.test_data_root:
+                if 'EndoVis2017' in cfgs.test_data_root or 'endovis2017' in cfgs.test_data_root:
                     if 'train' in cfgs.test_data_root:
-                        suffix = 'jpg'
+                        suffix = 'bmp'
                     elif 'test' in cfgs.test_data_root:
-                        suffix = 'png'
+                        suffix = 'bmp'
                     image = cv2.imread(
                         os.path.join(
                             cfgs.test_data_root,
                             '{}/images/{}.{}'.format(image_split, image_id,
                                                      suffix)))
-                elif 'EndoVis2018' in cfgs.test_data_root:
-                    suffix = 'png'
+                # 修改点 1: 兼容小写 endovis2018
+                elif 'EndoVis2018' in cfgs.test_data_root or 'endovis2018' in cfgs.test_data_root:
+                    # 修改点 2: 你的图片格式是 bmp，不是 png！
+                    suffix = 'bmp' 
                     image = cv2.imread(
                         os.path.join(
                             cfgs.test_data_root,
                             'images/{}_{}.{}'.format(image_split, image_id,
                                                      suffix)))
+                    
                 elif 'EndoVis2019' in cfgs.test_data_root:
                     suffix = 'png'
                     image = cv2.imread(

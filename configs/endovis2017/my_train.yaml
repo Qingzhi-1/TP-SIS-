@@ -1,13 +1,13 @@
 DATA:
-  dataset: endovis2018
-  # ⚠️ 修改点 1: 你的训练集 JSON 文件名
-  train_data_file: endovis2018_train.json
-  # ⚠️ 修改点 2: 你的训练集绝对路径
-  train_data_root: /root/datasets/endovis2018/train/
-  # ⚠️ 修改点 3: 你的验证集 JSON 文件名
-  val_data_file: endovis2018_val.json
-  # ⚠️ 修改点 4: 你的验证集绝对路径
-  val_data_root: /root/datasets/endovis2018/val/
+  dataset: endovis2017
+  # ⚠️ 修改 1: 指向你刚刚生成的训练集 JSON
+  train_data_file: endovis2017_train.json
+  # ⚠️ 修改 2: 你的训练集绝对路径 (注意结尾的斜杠)
+  train_data_root: /root/datasets/endovis2017/train/
+  # ⚠️ 修改 3: 指向你刚刚生成的验证集 JSON
+  val_data_file: endovis2017_val.json
+  # ⚠️ 修改 4: 你的验证集绝对路径 (我们之前决定用 val1 做验证)
+  val_data_root: /root/datasets/endovis2017/val1/
   sents_select_type: "random"
   use_vis_aug: True
   use_vis_aug_non_rigid: False
@@ -15,7 +15,7 @@ DATA:
 TRAIN:
   freeze_modules: ['backbone.token_embedding', 'backbone.transformer']
   # Base Arch
-  # ⚠️ 注意: 这里指向了本地权重的路径，下一步我们需要去下载它
+  # ⚠️ 确认: 这个路径是你之前下载权重的路径，保持现状即可
   clip_pretrain: pretrain/CLIP-ViT-B-16-laion2B-s34B-b88K/open_clip_pytorch_model.bin
   input_size: 448
   word_len: 77
@@ -42,7 +42,7 @@ TRAIN:
   moe_consistency_loss_weight: 1.0
   # MAE
   use_mae_gen_target_area: False
-  # ⚠️ 注意: MAE 权重路径，也需要下载
+  # ⚠️ 确认: MAE 权重路径
   mae_pretrain: 'pretrain/mae_pretrain_vit_base.pth'
   mae_input_shape: [224, 224]
   mae_mask_ratio: 0.25
@@ -55,7 +55,7 @@ TRAIN:
   epochs: 50
   milestones: [35]
   start_epoch: 0
-  batch_size: 16  # 如果报错 "CUDA out of memory"，把这里改成 8 或 4
+  batch_size: 16
   batch_size_val: 16
   optimizer: adam
   base_lr: 0.0001
@@ -68,10 +68,11 @@ TRAIN:
   print_freq: 100
   # Resume & Save
   exp_name: CRIS
-  output_folder: exp/endovis2018
+  # ⚠️ 修改 5: 输出文件夹改到 2017
+  output_folder: exp/endovis2017
   save_freq: 1
   weight:
-  resume: exp/endovis2018/CRIS/best_model.pth
+  resume: exp/endovis2017/CRIS/best_model.pth
   evaluate: True
 
 Distributed:
@@ -82,7 +83,7 @@ Distributed:
   rank: 0
 
 TEST:
-  # ⚠️ 修改点 5: 测试集路径同步修改
-  test_data_file: endovis2018_val.json
-  test_data_root: /root/datasets/endovis2018/val/
-  visualize: True
+  # ⚠️ 修改 6: 测试集同步修改为 val1
+  test_data_file: endovis2017_val.json
+  test_data_root: /root/datasets/endovis2017/val1/
+  visualize: False
